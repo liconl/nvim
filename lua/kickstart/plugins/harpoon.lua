@@ -25,7 +25,9 @@ return {
     vim.keymap.set('n', '<C-l>', function()
       harpoon:list():select(3)
     end, { desc = '[3] item in Harpoon' })
-    vim.keymap.set('n', '<C-;>', function()
+    -- Actual key map is <C-;>
+    -- Remap iterm to ttt
+    vim.keymap.set('n', 'ttt', function()
       harpoon:list():select(4)
     end, { desc = '[4] item in Harpoon' })
     -- Toggle previous & next buffers stored within Harpoon list

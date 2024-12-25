@@ -68,6 +68,7 @@ require('lazy').setup({
 
   -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
   --
+
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
