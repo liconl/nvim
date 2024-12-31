@@ -39,7 +39,13 @@ require('lazy').setup({
 
   require 'kickstart/plugins/cmp',
 
-  require 'kickstart/plugins/tokyonight',
+  require 'kickstart/plugins/mason',
+
+  require 'kickstart/plugins/colorscheme',
+
+  require 'kickstart/plugins/dressing',
+
+  require 'kickstart/plugins/nvim-treesitter-textobjects',
 
   require 'kickstart/plugins/todo-comments',
 
@@ -51,11 +57,11 @@ require('lazy').setup({
 
   require 'kickstart/plugins/lualine',
 
-  require 'kickstart/plugins/nightfox',
-
   -- require 'kickstart/plugins/copilot',
 
   require 'kickstart/plugins/nvim-surround',
+
+  require 'kickstart/plugins/trouble',
 
   require 'kickstart/plugins/gitpad',
 
