@@ -43,7 +43,37 @@ function _G.copy_relative_path()
   vim.fn.setreg('+', relative_path) -- Copy the path to the clipboard (default clipboard register '+')
   print('Copied relative path: ' .. relative_path)
 end
+-- Function to search Google with the selected text
+function _G.search_google()
+  local mode = vim.fn.mode()
 
+  -- Get the visually selected text
+  local _, line_start, col_start = unpack(vim.fn.getpos "'<")
+  local _, line_end, col_end = unpack(vim.fn.getpos "'>")
+  local lines = vim.fn.getline(line_start, line_end)
+
+  -- Extract and concatenate the selected text
+  if type(lines) == 'table' then
+    lines[1] = string.sub(lines[1], col_start)
+    lines[#lines] = string.sub(lines[#lines], 1, col_end)
+  end
+  local query = table.concat(lines, ' ')
+
+  -- Escape the query for URL encoding
+  query = query:gsub(' ', '+'):gsub('([^%w%-%.%_%~])', function(char)
+    return string.format('%%%02X', string.byte(char))
+  end)
+
+  -- Open the Google search URL in the default browser
+  local cmd = string.format('open https://www.google.com/search?q=%s', query)
+  local cmd = string.format('open -a ChatGPT https://www.google.com/search?q=%s', query)
+  os.execute(cmd)
+  os.execute(cmd)
+  print('Searching Google for: ' .. query)
+end
+
+-- Key mapping for <leader>G in visual mode
+vim.api.nvim_set_keymap('v', '<leader>G', ':lua search_google()<CR>', { noremap = true, silent = true })
 -- Key mapping for <leader>cp
 vim.api.nvim_set_keymap('n', '<leader>cp', ':lua copy_relative_path()<CR>', { noremap = true, silent = true })
 -- [[ Basic Autocommands ]]
