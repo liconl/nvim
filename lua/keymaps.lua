@@ -33,7 +33,19 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+-- Define the function globally to ensure it is accessible
+function _G.copy_relative_path()
+  local relative_path = vim.fn.expand '%' -- Get the relative path of the current file
+  if relative_path == '' then
+    print 'No file currently open.'
+    return
+  end
+  vim.fn.setreg('+', relative_path) -- Copy the path to the clipboard (default clipboard register '+')
+  print('Copied relative path: ' .. relative_path)
+end
 
+-- Key mapping for <leader>cp
+vim.api.nvim_set_keymap('n', '<leader>cp', ':lua copy_relative_path()<CR>', { noremap = true, silent = true })
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
