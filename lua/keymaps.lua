@@ -2,6 +2,8 @@
 --  See `:help vim.keymap.set()`
 
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
+-- Keymap for visual mode to execute :'<,'>normal maf
+vim.api.nvim_set_keymap('v', '<leader>maf', ":'<,'>normal mf<CR>", { noremap = true, silent = true, desc = 'Mark All Files' })
 vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Diagnostic keymaps
