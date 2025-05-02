@@ -47,6 +47,8 @@ require('lazy').setup({
   require 'plugins/nvim-ts-context-commentstring',
 
   require 'plugins/markdown-preview',
+
+  require 'plugins/nvim-colorizer',
 }, {
   ui = {
     icons = vim.g.have_nerd_font and {} or {

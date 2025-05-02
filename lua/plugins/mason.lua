@@ -29,13 +29,8 @@ return {
       ensure_installed = {
         'ts_ls',
         'html',
-        'cssls',
-        'tailwindcss',
-        'svelte',
         'lua_ls',
         'emmet_ls',
-        'prismals',
-        'pyright',
       },
     }
 

@@ -24,6 +24,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 -- Other
 vim.api.nvim_set_keymap('v', '<leader>G', ':lua search_google()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '<leader>C', ':lua search_chatgpt()<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>cp', ':lua copy_relative_path()<CR>', { noremap = true, silent = true })
 -- Get relative path
 function _G.copy_relative_path()
@@ -55,3 +56,31 @@ function _G.search_google()
   os.execute(cmd)
   print('Searching Google for: ' .. query)
 end
+-- Search ChatGPT
+function _G.search_chatgpt()
+  local mode = vim.fn.mode()
+  local _, line_start, col_start = unpack(vim.fn.getpos "'<")
+  local _, line_end, col_end = unpack(vim.fn.getpos "'>")
+  local lines = vim.fn.getline(line_start, line_end)
+  if type(lines) == 'table' then
+    lines[1] = string.sub(lines[1], col_start)
+    lines[#lines] = string.sub(lines[#lines], 1, col_end)
+  end
+  local query = table.concat(lines, ' ')
+  query = query:gsub(' ', '+'):gsub('([^%w%-%.%_%~])', function(char)
+    return string.format('%%%02X', string.byte(char))
+  end)
+  local cmd = string.format('open -a ChatGPT https://www.google.com/search?q=%s', query)
+  os.execute(cmd)
+  os.execute(cmd)
+  print('Searching Google for: ' .. query)
+end
+-- Create a custom command to open Finder in the current file's directory
+vim.api.nvim_create_user_command('Open', function()
+  local current_file = vim.fn.expand '%:p:h' -- Get the current file's directory
+  if vim.fn.has 'mac' == 1 then
+    vim.fn.system { 'open', current_file } -- macOS Finder
+  else
+    print 'This command is macOS specific and uses Finder.'
+  end
+end, {})
