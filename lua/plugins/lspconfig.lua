@@ -126,6 +126,9 @@ return {
           settings = {
             Lua = {
               -- make the language server recognize "vim" global
+              workspace = {
+                checkThirdParty = false,
+              },
               diagnostics = {
                 globals = { 'vim' },
               },
