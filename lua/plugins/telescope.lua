@@ -5,6 +5,19 @@
 --
 -- Use the `dependencies` key to specify the dependencies of a particular plugin
 
+local attachments_path = '/Users/luislicon/Library/CloudStorage/GoogleDrive-licon.luisangel@gmail.com/My Drive/Obsidian /attachments'
+
+local function is_image(filepath)
+  local ext = filepath:lower():match '%.([^.]+)$'
+  return vim.tbl_contains({ 'png', 'jpg', 'jpeg', 'webp', 'gif', 'bmp' }, ext)
+end
+
+local function preview_image_external(filepath)
+  -- Wrap the filepath in quotes in case it contains spaces
+  local quoted = string.format('"%s"', filepath)
+  os.execute('open ' .. quoted)
+end
+
 return {
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
@@ -52,16 +65,68 @@ return {
 
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
+      local actions = require 'telescope.actions'
+      local action_state = require 'telescope.actions.state'
       require('telescope').setup {
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
-        -- pickers = {}
+        defaults = {
+          --[[ mappings = {
+            i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+          }, ]]
+          preview = {
+            mime_hook = function(filepath, bufnr, opts)
+              local is_image = function(path)
+                local image_extensions = { 'png', 'jpg', 'jpeg', 'webp', 'gif', 'bmp' }
+                local ext = path:lower():match '^.+%.(.+)$'
+                return vim.tbl_contains(image_extensions, ext)
+              end
+
+              if is_image(filepath) then
+                local term = vim.api.nvim_open_term(bufnr, {})
+                local function send_output(_, data, _)
+                  for _, d in ipairs(data) do
+                    vim.api.nvim_chan_send(term, d .. '\r\n')
+                  end
+                end
+
+                -- Dynamically compute preview window size
+                local width = vim.api.nvim_win_get_width(opts.winid)
+                local height = vim.api.nvim_win_get_height(opts.winid)
+
+                -- Adjust for font aspect ratio (terminal chars are taller)
+                local adjusted_height = math.floor(height * 0.5)
+
+                -- Launch viu with window-based dimensions
+                vim.fn.jobstart({ 'viu', '-w', tostring(width), '-h', tostring(adjusted_height), filepath }, {
+                  on_stdout = send_output,
+                  stdout_buffered = true,
+                  pty = false,
+                })
+              else
+                require('telescope.previewers.utils').set_preview_message(bufnr, opts.winid, 'Binary cannot be previewed')
+              end
+            end,
+          },
+        },
+        pickers = {
+          find_files = {
+            attach_mappings = function(_, map)
+              map('i', '<CR>', function(prompt_bufnr)
+                local entry = action_state.get_selected_entry()
+                local filepath = entry.path or entry.filename
+                actions.close(prompt_bufnr)
+                if is_image(filepath) then
+                  preview_image_external(filepath)
+                else
+                  vim.cmd('edit ' .. vim.fn.fnameescape(filepath))
+                end
+              end)
+              return true
+            end,
+          },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),

@@ -108,3 +108,33 @@ require 'lazy-plugins'
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 -- this is a test commit
+-- -- Check if file is an image
+local function is_image(filepath)
+  local ext = filepath:lower():match '%.([^.]+)$'
+  return vim.tbl_contains({ 'png', 'jpg', 'jpeg', 'webp', 'gif', 'bmp' }, ext)
+end
+
+-- Open file in macOS Preview
+local function open_in_preview(filepath)
+  local quoted = string.format('"%s"', filepath)
+  os.execute('open ' .. quoted)
+end
+
+-- Autocmd to go back to :Ex and open in Preview
+vim.api.nvim_create_autocmd('BufEnter', {
+  pattern = '*',
+  callback = function(args)
+    local file = vim.api.nvim_buf_get_name(args.buf)
+
+    if vim.fn.isdirectory(file) == 0 and is_image(file) then
+      if not vim.b._image_previewed then
+        vim.b._image_previewed = true
+
+        vim.defer_fn(function()
+          vim.cmd 'Ex' -- Go back to parent dir in netrw
+          open_in_preview(file) -- Open image in Preview.app
+        end, 10)
+      end
+    end
+  end,
+})
