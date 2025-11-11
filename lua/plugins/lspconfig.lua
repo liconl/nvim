@@ -112,6 +112,13 @@ return {
           end,
         }
       end,
+      ['eslint'] = function()
+        lspconfig['eslint'].setup {
+          settings = {
+            workingDirectory = { mode = 'auto' }, -- detect project root
+          },
+        }
+      end,
       ['emmet_ls'] = function()
         -- configure emmet language server
         lspconfig['emmet_ls'].setup {

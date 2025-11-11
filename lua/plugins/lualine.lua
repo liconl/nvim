@@ -11,8 +11,8 @@ return {
       local filename = vim.fn.expand '%:t' -- Get file name
       local parent_dir = vim.fn.fnamemodify(full_path, ':h:t') -- Get parent folder name
 
-      -- If the file is "index.*", return the parent directory name
-      if filename:match '^index%..*$' then
+      -- If the file is "index.*" or "[id]", return the parent directory name
+      if filename:match '^index%..*$' or filename:match '^%[id%]%..*$' then
         return parent_dir ~= '' and parent_dir or 'index'
       end
 
