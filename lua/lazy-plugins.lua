@@ -1,7 +1,6 @@
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
-
   require 'plugins/gitsigns',
 
   require 'plugins/which-key',
@@ -34,15 +33,13 @@ require('lazy').setup({
 
   require 'plugins/lualine',
 
-  -- require 'plugins/copilot',
+  require 'plugins/copilot',
 
   require 'plugins/nvim-surround',
 
   require 'plugins/trouble',
 
   require 'plugins/gitpad',
-
-  require 'plugins/supermaven',
 
   require 'plugins/nvim-ts-context-commentstring',
 
